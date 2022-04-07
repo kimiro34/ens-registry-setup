@@ -1,6 +1,7 @@
 {
   "name": "hardhat-project",
   "scripts": {
+    "node:start": "npx hardhat node",
     "test": "npx hardhat test --network localhost",
     "compile": "npx hardhat compile",
     "deploy": "npx hardhat run --network deploy scripts/deploy.ts",
