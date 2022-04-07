@@ -3,13 +3,12 @@
   "scripts": {
     "node:start": "npx hardhat node",
     "test": "npx hardhat test --network localhost",
+    "ci": "scripts/test.sh",
     "compile": "npx hardhat compile",
     "deploy": "npx hardhat run --network deploy scripts/deploy.ts",
     "deploy:hardhat": "npx hardhat run --network localhost scripts/deploy.ts"
   },
-  "devDependencies": {
-
-  },
+  "devDependencies": {},
   "dependencies": {
     "@nomiclabs/hardhat-ethers": "^2.0.5",
     "@nomiclabs/hardhat-etherscan": "^3.0.3",
