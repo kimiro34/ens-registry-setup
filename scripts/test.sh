@@ -40,7 +40,7 @@ start_hardhat_node() {
   # # Gas limit of 7,000,000
   # node_modules/.bin/ganache-cli --gasLimit 0x6acfc00 "${accounts[@]}" --port "$ganache_port" > /dev/null &
 
-  npx hardhat  > /dev/null
+  npx hardhat node > /dev/null
   hardhat_node_pid=$!
 }
 
