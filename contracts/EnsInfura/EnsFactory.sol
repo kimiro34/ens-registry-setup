@@ -3,9 +3,10 @@ import {INameWrapper, PublicResolver} from "@ensdomains/ens-contracts/contracts/
 import "@ensdomains/ens-contracts/contracts/registry/ENSRegistry.sol";
 import "@ensdomains/ens-contracts/contracts/registry/FIFSRegistrar.sol";
 import {NameResolver, ReverseRegistrar} from "@ensdomains/ens-contracts/contracts/registry/ReverseRegistrar.sol";
+import "@ensdomains/ens-contracts/contracts/ethregistrar/BaseRegistrarImplementation.sol";
 
 // Construct a set of test ENS contracts.
-contract ENSDeployer {
+contract EnsFactory {
     bytes32 public constant TLD_LABEL = keccak256("znx");
     bytes32 public constant RESOLVER_LABEL = keccak256("resolver");
     bytes32 public constant REVERSE_REGISTRAR_LABEL = keccak256("reverse");
@@ -15,6 +16,7 @@ contract ENSDeployer {
     FIFSRegistrar public fifsRegistrar;
     ReverseRegistrar public reverseRegistrar;
     PublicResolver public publicResolver;
+    BaseRegistrarImplementation public baseRegistrarImplementation;
 
     function namehash(bytes32 node, bytes32 label)
         public
@@ -27,6 +29,11 @@ contract ENSDeployer {
     constructor() {
         ens = new ENSRegistry();
         publicResolver = new PublicResolver(ens, INameWrapper(address(0)));
+        bytes32 baseNode = namehash(bytes32(0), TLD_LABEL);
+        baseRegistrarImplementation = new BaseRegistrarImplementation(
+            ens,
+            baseNode
+        );
 
         // Set up the resolver
         bytes32 resolverNode = namehash(bytes32(0), RESOLVER_LABEL);
