@@ -33,7 +33,9 @@ describe("CollectionManager", function () {
     anotherUserAddr: string;
 
   const chainId = Number(getChainId());
-
+  const MAX_UINT256 = BigNumber.from(
+    "0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff"
+  );
   beforeEach(async function () {
     [deployer, user, userController, hacker, anotherUser] =
       await ethers.getSigners();
@@ -93,6 +95,8 @@ describe("CollectionManager", function () {
     );
 
     await unlController.deployed();
+
+    uccContract.approve(unlController.address, MAX_UINT256);
 
     console.log("==============CONTRACTS DEPLOYED================");
     console.log("UCC Token", uccContract.address);
