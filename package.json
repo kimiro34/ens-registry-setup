@@ -8,6 +8,9 @@
     "deploy:hardhat": "npx hardhat run --network localhost scripts/deploy.ts"
   },
   "devDependencies": {
+
+  },
+  "dependencies": {
     "@nomiclabs/hardhat-ethers": "^2.0.5",
     "@nomiclabs/hardhat-etherscan": "^3.0.3",
     "@nomiclabs/hardhat-waffle": "^2.0.3",
@@ -29,7 +32,6 @@
     "eslint-plugin-promise": "^5.2.0",
     "ethereum-waffle": "^3.4.4",
     "ethers": "^5.6.2",
-    "hardhat": "^2.9.2",
     "hardhat-gas-reporter": "^1.0.8",
     "prettier": "^2.6.2",
     "prettier-plugin-solidity": "^1.0.0-beta.13",
@@ -37,9 +39,8 @@
     "solidity-coverage": "^0.7.20",
     "ts-node": "^10.7.0",
     "typechain": "^5.2.0",
-    "typescript": "^4.6.3"
-  },
-  "dependencies": {
+    "typescript": "^4.6.3",
+    "hardhat": "^2.9.3",
     "@ensdomains/ens-contracts": "^0.0.11",
     "eth-ens-namehash": "^2.0.8"
   }
