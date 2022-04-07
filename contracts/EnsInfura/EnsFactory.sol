@@ -6,7 +6,7 @@ import {NameResolver, ReverseRegistrar} from "@ensdomains/ens-contracts/contract
 import "@ensdomains/ens-contracts/contracts/ethregistrar/BaseRegistrarImplementation.sol";
 
 // Construct a set of test ENS contracts.
-contract EnsFactory {
+contract ENSFactory {
     bytes32 public constant TLD_LABEL = keccak256("znx");
     bytes32 public constant RESOLVER_LABEL = keccak256("resolver");
     bytes32 public constant REVERSE_REGISTRAR_LABEL = keccak256("reverse");

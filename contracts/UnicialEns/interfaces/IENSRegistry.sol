@@ -1,7 +1,7 @@
 pragma solidity ^0.8.4;
 
 /**
- * @title EnsRegistry
+ * @title ENSRegistry
  * @dev Extract of the interface for ENS Registry
  */
 interface IENSRegistry {

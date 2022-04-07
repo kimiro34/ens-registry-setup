@@ -1,7 +1,7 @@
 pragma solidity ^0.8.4;
 
 /**
- * @title EnsResolver
+ * @title ENSResolver
  * @dev Extract of the interface for ENS Resolver
  */
 interface IENSResolver {
