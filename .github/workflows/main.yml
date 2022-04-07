@@ -8,6 +8,13 @@ on:
 
 jobs:
   build:
+    env:
+      NETWORK: $NETWORK
+      RPC_URL_ZNX_TESTNET: $RPC_URL_ZNX_TESTNET
+      RPC_URL_ZNX_MAINNET: $RPC_URL_ZNX_MAINNET
+      MNEMONIC: $MNEMONIC
+      ROPSTEN_URL: $ROPSTEN_URL
+
     runs-on: ubuntu-latest
 
     strategy:
