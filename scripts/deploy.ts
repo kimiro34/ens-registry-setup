@@ -1,72 +1,93 @@
 import { ethers } from "hardhat";
 import * as dotenv from "dotenv";
+import { Contract } from "ethers";
 dotenv.config();
-
-enum NETWORKS {
-  "ZNX_TESTNET" = "ZNX_TESTNET",
-}
-
-enum UCC {
-  "ZNX_TESTNET" = "0x8A2AA3F73402972FeBBE74a1f99390158C8802Be",
-}
-
-const network = NETWORKS[process.env["NETWORK"] as NETWORKS];
-if (!network) {
-  throw "Invalid network";
-}
+const namehash = require("eth-ens-namehash");
+const baseTld = "eth";
+const tld = "test";
+const utils = ethers.utils;
+const labelhash = (label: string) => utils.keccak256(utils.toUtf8Bytes(label));
+const ZERO_ADDRESS = "0x0000000000000000000000000000000000000000";
+const ZERO_HASH =
+  "0x0000000000000000000000000000000000000000000000000000000000000000";
 
 async function main() {
-  // We get the contract to deploy
-  const EnsFactory = await ethers.getContractFactory("EnsFactory");
-  const ensFactory = await EnsFactory.deploy();
+  const ENSRegistry = await ethers.getContractFactory("ENSRegistry");
+  const FIFSRegistrar = await ethers.getContractFactory("FIFSRegistrar");
+  const ReverseRegistrar = await ethers.getContractFactory("ReverseRegistrar");
+  const PublicResolver = await ethers.getContractFactory("PublicResolver");
+  const BaseRegistrarImplementation = await ethers.getContractFactory(
+    "BaseRegistrarImplementation"
+  );
+  const signers = await ethers.getSigners();
+  const accounts = signers.map((s) => s.address);
 
-  await ensFactory.deployed();
+  const ens = await ENSRegistry.deploy();
+  await ens.deployed();
+  console.log("ENSRegistry deployed to:", ens.address);
 
-  const ens = await ensFactory.ens();
-  const fifsRegistrar = await ensFactory.fifsRegistrar();
-  const reverseRegistrar = await ensFactory.reverseRegistrar();
-  const baseRegistrarImplementation =
-    await ensFactory.baseRegistrarImplementation();
-  const publicResolver = await ensFactory.publicResolver();
-
-  console.log("ENS Registry deployed to:", ens);
-  console.log("FifsRegistrar deployed to:", fifsRegistrar);
-  console.log("Reverse Registrar deployed to:", reverseRegistrar);
+  const baseRegistrarImplementation = await BaseRegistrarImplementation.deploy(
+    ens.address,
+    namehash.hash(baseTld)
+  );
+  await baseRegistrarImplementation.deployed();
   console.log(
-    "Base Registrar Implementation deployed to:",
-    baseRegistrarImplementation
-  );
-  console.log("Public Resolver deployed to:", publicResolver);
-  console.log("EnsFactory deployed to:", ensFactory.address);
-
-  const topDomain = "znx";
-  const domain = "unl";
-  const baseURI = "https://unicial-api.com/v1/";
-
-  const UNLRegistrar = await ethers.getContractFactory("UNLRegistrar");
-  const unlRegistrar = await UNLRegistrar.deploy(
-    ens,
-    baseRegistrarImplementation,
-    topDomain,
-    domain,
-    baseURI
+    "BaseRegistrarImplementation deployed to:",
+    baseRegistrarImplementation.address
   );
 
-  await unlRegistrar.deployed();
-
-  console.log("UNL Registrar deployed to:", unlRegistrar.address);
-  const UNLController = await ethers.getContractFactory("UNLController");
-
-  const unlController = await UNLController.deploy(
-    UCC[network],
-    unlRegistrar.address
+  console.log(
+    "BaseRegistrarImplementation baseNode:",
+    await baseRegistrarImplementation.baseNode()
   );
 
-  await unlController.deployed();
+  const resolver = await PublicResolver.deploy(ens.address, ZERO_ADDRESS);
+  await resolver.deployed();
+  await setupResolver(ens, resolver, accounts);
+  console.log("Public resolver deployed to:", resolver.address);
 
-  console.log("UNL Controller deployed to:", unlController.address);
+  const registrar = await FIFSRegistrar.deploy(ens.address, namehash.hash(tld));
+  await registrar.deployed();
+  await setupRegistrar(ens, registrar);
+  console.log("FIFSRegistrar deployed to:", registrar.address);
+
+  const reverseRegistrar = await ReverseRegistrar.deploy(
+    ens.address,
+    resolver.address
+  );
+  await reverseRegistrar.deployed();
+  await setupReverseRegistrar(ens, registrar, reverseRegistrar, accounts);
+  console.log("ReverseRegistrar deployed to:", reverseRegistrar.address);
 }
 
+async function setupResolver(ens: Contract, resolver: Contract, accounts: any) {
+  const resolverNode = namehash.hash("resolver");
+  const resolverLabel = labelhash("resolver");
+  await ens.setSubnodeOwner(ZERO_HASH, resolverLabel, accounts[0]);
+  await ens.setResolver(resolverNode, resolver.address);
+  await resolver["setAddr(bytes32,address)"](resolverNode, resolver.address);
+}
+
+async function setupRegistrar(ens: Contract, registrar: Contract) {
+  await ens.setSubnodeOwner(ZERO_HASH, labelhash(tld), registrar.address);
+}
+
+async function setupReverseRegistrar(
+  ens: Contract,
+  registrar: Contract,
+  reverseRegistrar: Contract,
+  accounts: any
+) {
+  await ens.setSubnodeOwner(ZERO_HASH, labelhash("reverse"), accounts[0]);
+  await ens.setSubnodeOwner(
+    namehash.hash("reverse"),
+    labelhash("addr"),
+    reverseRegistrar.address
+  );
+}
+
+// We recommend this pattern to be able to use async/await everywhere
+// and properly handle errors.
 main()
   .then(() => process.exit(0))
   .catch((error) => {
