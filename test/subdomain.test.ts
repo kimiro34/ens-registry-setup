@@ -2,22 +2,64 @@ import { expect } from "chai";
 import { BigNumber, Contract, Signer } from "ethers";
 import { ethers } from "hardhat";
 import { getChainId } from "./helpers/ChainId";
+const namehash = require("eth-ens-namehash");
+const utils = ethers.utils;
+const labelhash = (label: string) => utils.keccak256(utils.toUtf8Bytes(label));
 
-describe("CollectionManager", function () {
+const TOP_DOMAIN = "znx";
+const DOMAIN = "unl";
+const BASE_URI = "https://unicial-api.com/v1/";
+
+const PRICE = BigNumber.from("100000000000000000000");
+const ZERO_ADDRESS = "0x0000000000000000000000000000000000000000";
+const ZERO_32_BYTES =
+  "0x0000000000000000000000000000000000000000000000000000000000000000";
+const MAX_GAS_PRICE = "20000000000";
+const ONE_DAY = 60 * 60 * 24;
+const MAX_UINT256 = BigNumber.from(
+  "0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff"
+);
+const ethLabelHash = ethers.utils.keccak256(
+  ethers.utils.toUtf8Bytes(TOP_DOMAIN)
+);
+const unlLabelHash = ethers.utils.keccak256(ethers.utils.toUtf8Bytes(DOMAIN));
+
+const ethTopdomainHash = ethers.utils.keccak256(
+  ethers.utils.defaultAbiCoder.encode(
+    ["bytes32", "bytes32"],
+    [ZERO_32_BYTES, ethLabelHash]
+  )
+);
+
+const unlDomainHash = ethers.utils.keccak256(
+  ethers.utils.defaultAbiCoder.encode(
+    ["bytes32", "bytes32"],
+    [ethTopdomainHash, unlLabelHash]
+  )
+);
+const chainId = Number(getChainId());
+
+async function setupResolver(ens: Contract, resolver: Contract, owner: string) {
+  const resolverNode = namehash.hash("resolver");
+  const resolverLabel = labelhash("resolver");
+  await ens.setSubnodeOwner(ZERO_32_BYTES, resolverLabel, owner);
+  await ens.setResolver(resolverNode, resolver.address);
+  await resolver["setAddr(bytes32,address)"](resolverNode, resolver.address);
+}
+
+describe("UNL Names Contract", function () {
   let UNLRegistrar,
     UNLController,
-    ENSFactory,
     ENSRegistry,
-    ENSBaseRegistrar,
-    ENSPublicResolver,
+    BaseRegistrarImplementation,
+    PublicResolver,
     UccContract;
 
   let unlRegistrar: Contract,
     unlController: Contract,
-    ensFactory: Contract,
-    ensRegistry: Contract,
-    ensBaseRegistrar: Contract,
-    ensPublicResolver: Contract,
+    ens: Contract,
+    baseRegistrarImplementation: Contract,
+    resolver: Contract,
     uccContract: Contract;
 
   let deployer: Signer,
@@ -32,10 +74,6 @@ describe("CollectionManager", function () {
     hackerAddr: string,
     anotherUserAddr: string;
 
-  const chainId = Number(getChainId());
-  const MAX_UINT256 = BigNumber.from(
-    "0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff"
-  );
   beforeEach(async function () {
     [deployer, user, userController, hacker, anotherUser] =
       await ethers.getSigners();
@@ -48,69 +86,110 @@ describe("CollectionManager", function () {
         anotherUser.getAddress(),
       ]);
 
-    ENSFactory = await ethers.getContractFactory("ENSFactory");
-    ensFactory = await ENSFactory.deploy();
-
-    await ensFactory.deployed();
-
-    const ensAddr = await ensFactory.ens();
-    const baseRegistrarImplementationAddr =
-      await ensFactory.baseRegistrarImplementation();
-    const publicResolverAddr = await ensFactory.publicResolver();
-
     ENSRegistry = await ethers.getContractFactory("ENSRegistry");
-    ensRegistry = ENSRegistry.attach(ensAddr);
-
-    ENSBaseRegistrar = await ethers.getContractFactory(
+    PublicResolver = await ethers.getContractFactory("PublicResolver");
+    BaseRegistrarImplementation = await ethers.getContractFactory(
       "BaseRegistrarImplementation"
     );
-    ensBaseRegistrar = ENSBaseRegistrar.attach(baseRegistrarImplementationAddr);
 
-    ENSPublicResolver = await ethers.getContractFactory("PublicResolver");
-    ensPublicResolver = ENSPublicResolver.attach(publicResolverAddr);
+    ens = await ENSRegistry.deploy();
+    await ens.deployed();
 
-    const topDomain = "znx";
-    const domain = "unl";
-    const baseURI = "https://unicial-api.com/v1/";
+    baseRegistrarImplementation = await BaseRegistrarImplementation.deploy(
+      ens.address,
+      namehash.hash(TOP_DOMAIN)
+    );
+    await baseRegistrarImplementation.deployed();
 
-    const UNLRegistrar = await ethers.getContractFactory("UNLRegistrar");
-    const unlRegistrar = await UNLRegistrar.deploy(
-      ensAddr,
-      baseRegistrarImplementationAddr,
-      topDomain,
-      domain,
-      baseURI
+    expect(await ens.owner(ZERO_32_BYTES)).to.be.eq(deployerAddr);
+
+    // Register eth top domain
+    await ens.setSubnodeOwner(
+      ZERO_32_BYTES,
+      ethLabelHash,
+      baseRegistrarImplementation.address
+    );
+
+    // Add controller to base
+    await baseRegistrarImplementation.addController(deployerAddr);
+    // Register unl
+    await baseRegistrarImplementation.register(
+      unlLabelHash,
+      deployerAddr,
+      60 * 60 * 24 * 30
+    );
+
+    resolver = await PublicResolver.deploy(ens.address, ZERO_ADDRESS);
+    await resolver.deployed();
+    await setupResolver(ens, resolver, deployerAddr);
+
+    UNLRegistrar = await ethers.getContractFactory("UNLRegistrar");
+    unlRegistrar = await UNLRegistrar.deploy(
+      ens.address,
+      baseRegistrarImplementation.address,
+      TOP_DOMAIN,
+      DOMAIN,
+      BASE_URI
     );
 
     await unlRegistrar.deployed();
 
-    const UNLController = await ethers.getContractFactory("UNLController");
+    UNLController = await ethers.getContractFactory("UNLController");
 
     UccContract = await ethers.getContractFactory("UnicialCashToken");
     uccContract = await UccContract.deploy(chainId);
 
-    const unlController = await UNLController.deploy(
+    unlController = await UNLController.deploy(
       uccContract.address,
       unlRegistrar.address
     );
 
     await unlController.deployed();
+    await unlRegistrar.addController(unlController.address);
+
+    // Transfer DCL domain
+    await baseRegistrarImplementation[
+      "safeTransferFrom(address,address,uint256)"
+    ](deployerAddr, unlRegistrar.address, unlLabelHash);
 
     uccContract.approve(unlController.address, MAX_UINT256);
 
     console.log("==============CONTRACTS DEPLOYED================");
-    console.log("UCC Token", uccContract.address);
-    console.log("ENS Factory", ensFactory.address);
-    console.log("ENS Registry", ensAddr);
-    console.log("ENS BaseRegistrar", baseRegistrarImplementationAddr);
-    console.log("ENS Public Resolver", publicResolverAddr);
+    console.log("ENS Registry", ens.address);
+    console.log("ENS BaseRegistrar", baseRegistrarImplementation.address);
+    console.log("ENS Public Resolver", resolver.address);
     console.log("UNL Registrar", unlRegistrar.address);
     console.log("UNL Controller", unlController.address);
+    console.log("UCC Token", uccContract.address);
     console.log("================================================");
   });
-  describe("UNL Names", function () {
-    it("UNLRegistrar", async function () {
-      console.log("Test started");
+  describe("UNLRegistrar", function () {
+    describe("Constructor", function () {
+      it("should be depoyed with valid arguments", async function () {
+        const registry = await unlRegistrar.registry();
+        expect(registry).to.be.equal(ens.address);
+
+        const base = await unlRegistrar.base();
+        expect(base).to.be.equal(baseRegistrarImplementation.address);
+
+        const topdomain = await unlRegistrar.topdomain();
+        expect(topdomain).to.be.equal(TOP_DOMAIN);
+
+        const domain = await unlRegistrar.domain();
+        expect(domain).to.be.equal(DOMAIN);
+
+        const topdomainHash = await unlRegistrar.topdomainNameHash();
+        expect(topdomainHash).to.be.equal(ethTopdomainHash);
+
+        const domainHash = await unlRegistrar.domainNameHash();
+        expect(domainHash).to.be.equal(unlDomainHash);
+
+        const userController = await unlRegistrar.owner();
+        expect(userController).to.be.equal(deployerAddr);
+
+        const userControllerOfUNL = await ens.owner(unlDomainHash);
+        expect(userControllerOfUNL).to.be.equal(unlRegistrar.address);
+      });
     });
   });
 });

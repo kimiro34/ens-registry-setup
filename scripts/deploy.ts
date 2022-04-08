@@ -24,32 +24,20 @@ async function main() {
 
   const ens = await ENSRegistry.deploy();
   await ens.deployed();
-  console.log("ENSRegistry deployed to:", ens.address);
 
   const baseRegistrarImplementation = await BaseRegistrarImplementation.deploy(
     ens.address,
     namehash.hash(baseTld)
   );
   await baseRegistrarImplementation.deployed();
-  console.log(
-    "BaseRegistrarImplementation deployed to:",
-    baseRegistrarImplementation.address
-  );
-
-  console.log(
-    "BaseRegistrarImplementation baseNode:",
-    await baseRegistrarImplementation.baseNode()
-  );
 
   const resolver = await PublicResolver.deploy(ens.address, ZERO_ADDRESS);
   await resolver.deployed();
   await setupResolver(ens, resolver, accounts);
-  console.log("Public resolver deployed to:", resolver.address);
 
   const registrar = await FIFSRegistrar.deploy(ens.address, namehash.hash(tld));
   await registrar.deployed();
   await setupRegistrar(ens, registrar);
-  console.log("FIFSRegistrar deployed to:", registrar.address);
 
   const reverseRegistrar = await ReverseRegistrar.deploy(
     ens.address,
@@ -57,6 +45,14 @@ async function main() {
   );
   await reverseRegistrar.deployed();
   await setupReverseRegistrar(ens, registrar, reverseRegistrar, accounts);
+
+  console.log("ENSRegistry deployed to:", ens.address);
+  console.log(
+    "BaseRegistrarImplementation deployed to:",
+    baseRegistrarImplementation.address
+  );
+  console.log("Public resolver deployed to:", resolver.address);
+  console.log("FIFSRegistrar deployed to:", registrar.address);
   console.log("ReverseRegistrar deployed to:", reverseRegistrar.address);
 }
 
