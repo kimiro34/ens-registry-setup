@@ -19,10 +19,9 @@ const ONE_DAY = 60 * 60 * 24;
 const MAX_UINT256 = BigNumber.from(
   "0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff"
 );
-const ethLabelHash = ethers.utils.keccak256(
-  ethers.utils.toUtf8Bytes(TOP_DOMAIN)
-);
-const unlLabelHash = ethers.utils.keccak256(ethers.utils.toUtf8Bytes(DOMAIN));
+
+const ethLabelHash = labelhash(TOP_DOMAIN);
+const unlLabelHash = labelhash(DOMAIN);
 
 const ethTopdomainHash = ethers.utils.keccak256(
   ethers.utils.defaultAbiCoder.encode(
@@ -37,6 +36,29 @@ const unlDomainHash = ethers.utils.keccak256(
     [ethTopdomainHash, unlLabelHash]
   )
 );
+
+const subdomain1 = "kimiro";
+const subdomain1WithLocale = "Kimiro";
+const subdomain1LabelHash = labelhash(subdomain1);
+const subdomain1Hash = ethers.utils.keccak256(
+  ethers.utils.defaultAbiCoder.encode(
+    ["bytes32", "bytes32"],
+    [unlDomainHash, subdomain1LabelHash]
+  )
+);
+
+const subdomain2 = "dotfund";
+const subdomain2LabelHash = labelhash(subdomain2);
+
+const subdomain3 = "kimiro1";
+const subdomain3LabelHash = labelhash(subdomain3);
+const subdomain3Hash = ethers.utils.keccak256(
+  ethers.utils.defaultAbiCoder.encode(
+    ["bytes32", "bytes32"],
+    [unlDomainHash, subdomain3LabelHash]
+  )
+);
+
 const chainId = Number(getChainId());
 
 async function setupResolver(ens: Contract, resolver: Contract, owner: string) {
@@ -48,7 +70,7 @@ async function setupResolver(ens: Contract, resolver: Contract, owner: string) {
 }
 
 describe("UNL Names Contract", function () {
-  let UNLRegistrar,
+  let UNLRegistrar: any,
     UNLController,
     ENSRegistry,
     BaseRegistrarImplementation,
@@ -154,41 +176,248 @@ describe("UNL Names Contract", function () {
 
     uccContract.approve(unlController.address, MAX_UINT256);
 
-    console.log("==============CONTRACTS DEPLOYED================");
-    console.log("ENS Registry", ens.address);
-    console.log("ENS BaseRegistrar", baseRegistrarImplementation.address);
-    console.log("ENS Public Resolver", resolver.address);
-    console.log("UNL Registrar", unlRegistrar.address);
-    console.log("UNL Controller", unlController.address);
-    console.log("UCC Token", uccContract.address);
-    console.log("================================================");
+    // console.log("==============CONTRACTS DEPLOYED================");
+    // console.log("ENS Registry", ens.address);
+    // console.log("ENS BaseRegistrar", baseRegistrarImplementation.address);
+    // console.log("ENS Public Resolver", resolver.address);
+    // console.log("UNL Registrar", unlRegistrar.address);
+    // console.log("UNL Controller", unlController.address);
+    // console.log("UCC Token", uccContract.address);
+    // console.log("================================================");
   });
   describe("UNLRegistrar", function () {
-    describe("Constructor", function () {
-      it("should be depoyed with valid arguments", async function () {
-        const registry = await unlRegistrar.registry();
-        expect(registry).to.be.equal(ens.address);
+    // describe("constructor", function () {
+    //   it("should be depoyed with valid arguments", async function () {
+    //     const registry = await unlRegistrar.registry();
+    //     expect(registry).to.be.equal(ens.address);
 
-        const base = await unlRegistrar.base();
-        expect(base).to.be.equal(baseRegistrarImplementation.address);
+    //     const base = await unlRegistrar.base();
+    //     expect(base).to.be.equal(baseRegistrarImplementation.address);
 
-        const topdomain = await unlRegistrar.topdomain();
-        expect(topdomain).to.be.equal(TOP_DOMAIN);
+    //     const topdomain = await unlRegistrar.topdomain();
+    //     expect(topdomain).to.be.equal(TOP_DOMAIN);
 
-        const domain = await unlRegistrar.domain();
-        expect(domain).to.be.equal(DOMAIN);
+    //     const domain = await unlRegistrar.domain();
+    //     expect(domain).to.be.equal(DOMAIN);
 
-        const topdomainHash = await unlRegistrar.topdomainNameHash();
-        expect(topdomainHash).to.be.equal(ethTopdomainHash);
+    //     const topdomainHash = await unlRegistrar.topdomainNameHash();
+    //     expect(topdomainHash).to.be.equal(ethTopdomainHash);
 
-        const domainHash = await unlRegistrar.domainNameHash();
-        expect(domainHash).to.be.equal(unlDomainHash);
+    //     const domainHash = await unlRegistrar.domainNameHash();
+    //     expect(domainHash).to.be.equal(unlDomainHash);
 
-        const userController = await unlRegistrar.owner();
-        expect(userController).to.be.equal(deployerAddr);
+    //     const userController = await unlRegistrar.owner();
+    //     expect(userController).to.be.equal(deployerAddr);
 
-        const userControllerOfUNL = await ens.owner(unlDomainHash);
-        expect(userControllerOfUNL).to.be.equal(unlRegistrar.address);
+    //     const userControllerOfUNL = await ens.owner(unlDomainHash);
+    //     expect(userControllerOfUNL).to.be.equal(unlRegistrar.address);
+    //   });
+
+    //   it("reverts if registry is not a contract", async function () {
+    //     await expect(
+    //       UNLRegistrar.deploy(
+    //         userAddr,
+    //         baseRegistrarImplementation.address,
+    //         TOP_DOMAIN,
+    //         DOMAIN,
+    //         BASE_URI
+    //       )
+    //     ).to.be.revertedWith("New registry should be a contract");
+    //   });
+
+    //   it("reverts if base is not a contract", async function () {
+    //     await expect(
+    //       UNLRegistrar.deploy(
+    //         ens.address,
+    //         userAddr,
+    //         TOP_DOMAIN,
+    //         DOMAIN,
+    //         BASE_URI
+    //       )
+    //     ).to.be.revertedWith("New base should be a contract");
+    //   });
+
+    //   it("reverts if top domain is empty", async function () {
+    //     await expect(
+    //       UNLRegistrar.deploy(
+    //         ens.address,
+    //         baseRegistrarImplementation.address,
+    //         "",
+    //         DOMAIN,
+    //         BASE_URI
+    //       )
+    //     ).to.be.revertedWith("Top domain can not be empty");
+    //   });
+
+    //   it("reverts if domain is empty", async function () {
+    //     await expect(
+    //       UNLRegistrar.deploy(
+    //         ens.address,
+    //         baseRegistrarImplementation.address,
+    //         TOP_DOMAIN,
+    //         "",
+    //         BASE_URI
+    //       )
+    //     ).to.be.revertedWith("Domain can not be empty");
+    //   });
+    // });
+    describe("register", function () {
+      it("should register a name by an authorized account", async function () {
+        let balanceOfUser = await unlRegistrar.balanceOf(anotherUserAddr);
+        expect(balanceOfUser).to.eq(0);
+
+        let subdomainOwner = await ens.owner(subdomain1Hash);
+        expect(subdomainOwner).to.be.equal(ZERO_ADDRESS);
+
+        let currentResolver = await ens.resolver(subdomain1Hash);
+        expect(currentResolver).to.be.equal(ZERO_ADDRESS);
+
+        await unlRegistrar.addController(userControllerAddr);
+
+        await expect(
+          unlRegistrar
+            .connect(userController)
+            .register(subdomain1, anotherUserAddr)
+        )
+          .to.emit(ens, "NewOwner")
+          .withArgs(unlDomainHash, subdomain1LabelHash, anotherUserAddr)
+          .to.emit(unlRegistrar, "Transfer")
+          .withArgs(
+            ZERO_ADDRESS,
+            anotherUserAddr,
+            BigNumber.from(subdomain1LabelHash).toString()
+          )
+          .to.emit(unlRegistrar, "NameRegistered")
+          .withArgs(
+            userControllerAddr,
+            anotherUserAddr,
+            subdomain1LabelHash,
+            subdomain1,
+            (await ethers.provider.getBlock("latest")).timestamp + 1
+          );
+
+        balanceOfUser = await unlRegistrar.balanceOf(anotherUserAddr);
+        expect(balanceOfUser).to.eq(1);
+
+        const tokenId = await unlRegistrar.tokenOfOwnerByIndex(
+          anotherUserAddr,
+          0
+        );
+        const subdomain = await unlRegistrar.subdomains(tokenId);
+
+        expect(subdomain).to.be.equal(subdomain1);
+
+        subdomainOwner = await ens.owner(subdomain1Hash);
+        expect(subdomainOwner).to.be.equal(anotherUserAddr);
+
+        currentResolver = await ens.resolver(subdomain1Hash);
+        expect(currentResolver).to.be.equal(ZERO_ADDRESS);
+      });
+
+      it("should register a name with numbers by an authorized account", async function () {
+        let balanceOfUser = await unlRegistrar.balanceOf(anotherUserAddr);
+        expect(balanceOfUser).to.eq(0);
+
+        let subdomainOwner = await ens.owner(subdomain3Hash);
+        expect(subdomainOwner).to.be.equal(ZERO_ADDRESS);
+
+        let currentResolver = await ens.resolver(subdomain3Hash);
+        expect(currentResolver).to.be.equal(ZERO_ADDRESS);
+
+        await unlRegistrar.addController(userControllerAddr);
+
+        await expect(
+          unlRegistrar
+            .connect(userController)
+            .register(subdomain3, anotherUserAddr)
+        )
+          .to.emit(ens, "NewOwner")
+          .withArgs(unlDomainHash, subdomain3LabelHash, anotherUserAddr)
+          .to.emit(unlRegistrar, "Transfer")
+          .withArgs(
+            ZERO_ADDRESS,
+            anotherUserAddr,
+            BigNumber.from(subdomain3LabelHash).toString()
+          )
+          .to.emit(unlRegistrar, "NameRegistered")
+          .withArgs(
+            userControllerAddr,
+            anotherUserAddr,
+            subdomain3LabelHash,
+            subdomain3,
+            (await ethers.provider.getBlock("latest")).timestamp + 1
+          );
+
+        balanceOfUser = await unlRegistrar.balanceOf(anotherUserAddr);
+        expect(balanceOfUser).to.eq(1);
+
+        const tokenId = await unlRegistrar.tokenOfOwnerByIndex(
+          anotherUserAddr,
+          0
+        );
+        const subdomain = await unlRegistrar.subdomains(tokenId);
+
+        expect(subdomain).to.be.equal(subdomain3);
+
+        subdomainOwner = await ens.owner(subdomain3Hash);
+        expect(subdomainOwner).to.be.equal(anotherUserAddr);
+
+        currentResolver = await ens.resolver(subdomain3Hash);
+        expect(currentResolver).to.be.equal(ZERO_ADDRESS);
+      });
+      it("should own more than one name", async function () {
+        await unlRegistrar.addController(userControllerAddr);
+        await unlRegistrar
+          .connect(userController)
+          .register(subdomain1, anotherUserAddr);
+
+        await unlRegistrar
+          .connect(userController)
+          .register(subdomain2, anotherUserAddr);
+
+        const balanceOfUser = await unlRegistrar.balanceOf(anotherUserAddr);
+        expect(balanceOfUser).to.eq(2);
+      });
+      it("reverts when trying to register a name by an unauthorized address", async function () {
+        await expect(
+          unlRegistrar.connect(hacker).register(subdomain1, userAddr)
+        ).to.be.revertedWith("Only a controller can call this method");
+      });
+      it("reverts when trying to register a name for a not owned domain", async function () {
+        const contract = await UNLRegistrar.deploy(
+          ens.address,
+          baseRegistrarImplementation.address,
+          TOP_DOMAIN,
+          "unl2",
+          BASE_URI
+        );
+
+        await contract.addController(userControllerAddr);
+        await expect(
+          contract.connect(userController).register(subdomain1, userAddr)
+        ).to.be.revertedWith("The contract does not own the domain");
+      });
+      it("reverts when trying to register a name already used", async function () {
+        await unlRegistrar.addController(userControllerAddr);
+        await unlRegistrar.register(subdomain1, userAddr);
+
+        await expect(
+          unlController.connect(userController).register(subdomain1, user)
+        ).to.be.revertedWith("Subdomain already owned");
+
+        const subdomainWithUppercase = subdomain1.toLocaleUpperCase();
+
+        await expect(
+          unlController
+            .connect(userController)
+            .register(subdomainWithUppercase, userAddr)
+        ).to.be.revertedWith("Subdomain already owned");
+
+        await expect(
+          unlController
+            .connect(userController)
+            .register(subdomain1WithLocale, userAddr)
+        ).to.be.revertedWith("Subdomain already owned");
       });
     });
   });

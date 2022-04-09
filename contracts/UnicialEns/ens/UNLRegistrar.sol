@@ -1,7 +1,7 @@
 pragma solidity ^0.8.4;
 
 import "@openzeppelin/contracts/access/Ownable.sol";
-import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
+import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol";
 import "@openzeppelin/contracts/utils/Address.sol";
 
 import "../interfaces/IENSRegistry.sol";
@@ -9,7 +9,7 @@ import "../interfaces/IENSResolver.sol";
 import "../interfaces/IBaseRegistrar.sol";
 import "../interfaces/IERC20.sol";
 
-contract UNLRegistrar is ERC721, Ownable {
+contract UNLRegistrar is ERC721Enumerable, Ownable {
     using Address for address;
     bytes4 public constant ERC721_RECEIVED = 0x150b7a02;
 
@@ -33,9 +33,6 @@ contract UNLRegistrar is ERC721, Ownable {
     bytes32 public domainNameHash;
     // Base URI
     string public baseURI;
-
-    // Whether the migration of v1 names has finished or not
-    bool public migrated;
 
     // A map of subdomain hashes to its string for reverse lookup
     mapping(bytes32 => string) public subdomains;
@@ -78,9 +75,6 @@ contract UNLRegistrar is ERC721, Ownable {
     // Emitted when a controller was removed
     event ControllerRemoved(address indexed _controller);
 
-    // Emitted when the migration was finished
-    event MigrationFinished();
-
     // Emitted when base URI is was changed
     event BaseURI(string _oldBaseURI, string _newBaseURI);
 
@@ -105,22 +99,6 @@ contract UNLRegistrar is ERC721, Ownable {
             controllers[msg.sender],
             "Only a controller can call this method"
         );
-        _;
-    }
-
-    /**
-     * @dev Check if the migration is pending
-     */
-    modifier isNotMigrated() {
-        require(!migrated, "The migration has finished");
-        _;
-    }
-
-    /**
-     * @dev Check if the migration is completed
-     */
-    modifier isMigrated() {
-        require(migrated, "The migration has not finished");
         _;
     }
 
@@ -179,7 +157,6 @@ contract UNLRegistrar is ERC721, Ownable {
     function register(string calldata _subdomain, address _beneficiary)
         external
         onlyController
-        isMigrated
     {
         // Make sure this contract owns the domain
         _checkOwnerOfDomain();
@@ -521,14 +498,6 @@ contract UNLRegistrar is ERC721, Ownable {
         );
         emit BaseURI(baseURI, _baseURI);
         baseURI = _baseURI;
-    }
-
-    /**
-     * @dev Set the migration as finished
-     */
-    function migrationFinished() external onlyOwner isNotMigrated {
-        migrated = true;
-        emit MigrationFinished();
     }
 
     function _checkOwnerOfDomain() internal view {
