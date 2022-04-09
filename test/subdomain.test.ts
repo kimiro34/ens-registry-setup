@@ -603,23 +603,59 @@ describe("UNL Names Contract", function () {
     //     ).to.be.revertedWith("ERC721: operator query for nonexistent token");
     //   });
     // });
-    describe("onERC721Received", function () {
-      it("reverts when transferring a token to the registrar by an unauthorized account", async function () {
-        await unlRegistrar.addController(userControllerAddr);
-        await unlRegistrar
-          .connect(userController)
-          .register(subdomain1, userAddr);
-
-        await expect(
-          unlRegistrar
-            .connect(user)
-            ["safeTransferFrom(address,address,uint256)"](
-              userAddr,
-              unlRegistrar.address,
-              subdomain1LabelHash
-            )
-        ).to.be.revertedWith("Only base can send NFTs to this contract");
-      });
-    });
+    // describe("onERC721Received", function () {
+    //   it("reverts when transferring a token to the registrar by an unauthorized account", async function () {
+    //     await unlRegistrar.addController(userControllerAddr);
+    //     await unlRegistrar
+    //       .connect(userController)
+    //       .register(subdomain1, userAddr);
+    //     await expect(
+    //       unlRegistrar
+    //         .connect(user)
+    //         ["safeTransferFrom(address,address,uint256)"](
+    //           userAddr,
+    //           unlRegistrar.address,
+    //           subdomain1LabelHash
+    //         )
+    //     ).to.be.revertedWith("Only base can send NFTs to this contract");
+    //   });
+    // });
+    // describe("tokenURI", function () {
+    //   it("should return the token URI", async function () {
+    //     await unlRegistrar.addController(userControllerAddr);
+    //     await unlRegistrar
+    //       .connect(userController)
+    //       .register(subdomain1, userAddr);
+    //     let tokenURI = await unlRegistrar.tokenURI(subdomain1LabelHash);
+    //     expect(tokenURI).to.be.equal(`${BASE_URI}${subdomain1}`);
+    //     await unlRegistrar
+    //       .connect(userController)
+    //       .register(subdomain2, userAddr);
+    //     tokenURI = await unlRegistrar.tokenURI(subdomain2LabelHash);
+    //     expect(tokenURI).to.be.equal(`${BASE_URI}${subdomain2}`);
+    //   });
+    //   it("should return the token URI at lowercase for uppercase", async function () {
+    //     await unlRegistrar.addController(userControllerAddr);
+    //     await unlRegistrar
+    //       .connect(userController)
+    //       .register(subdomain1WithLocale, userAddr);
+    //     let tokenURI = await unlRegistrar.tokenURI(subdomain1LabelHash);
+    //     expect(tokenURI).to.be.equal(`${BASE_URI}${subdomain1}`);
+    //   });
+    //   it("should return an empty string if base URI is not set", async function () {
+    //     await unlRegistrar.addController(userControllerAddr);
+    //     await unlRegistrar
+    //       .connect(userController)
+    //       .register(subdomain1, userAddr);
+    //     let tokenURI = await unlRegistrar.tokenURI(subdomain1LabelHash);
+    //     expect(tokenURI).to.be.equal(`${BASE_URI}${subdomain1}`);
+    //     await unlRegistrar.updateBaseURI("");
+    //     tokenURI = await unlRegistrar.tokenURI(subdomain1LabelHash);
+    //     expect(tokenURI).to.be.equal("");
+    //   });
+    // it("reverts when trying to return a token URI for an unexisting token", async function () {
+    //   await expect(unlRegistrar.tokenURI(subdomain1LabelHash)).to.be.reverted;
+    // });
+    // });
   });
 });
