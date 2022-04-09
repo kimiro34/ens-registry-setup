@@ -519,35 +519,6 @@ contract UNLRegistrar is ERC721Enumerable, Ownable {
     }
 
     /**
-     * @dev Convert bytes32 to string.
-     * @param _x - to be converted to string.
-     * @return string
-     */
-    function _bytes32ToString(bytes32 _x)
-        internal
-        pure
-        returns (string memory)
-    {
-        uint256 charCount = 0;
-        for (uint256 j = 0; j <= 256; j += 8) {
-            bytes1 char = bytes1(_x << j);
-            if (char == 0) {
-                break;
-            }
-            charCount++;
-        }
-
-        string memory out = new string(charCount);
-
-        // solium-disable-next-line security/no-inline-assembly
-        assembly {
-            mstore(add(0x20, out), _x)
-        }
-
-        return out;
-    }
-
-    /**
      * @dev Lowercase a string.
      * @param _str - to be converted to string.
      * @return string

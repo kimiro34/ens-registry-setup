@@ -757,5 +757,266 @@ describe("UNL Names Contract", function () {
     //     ).to.be.revertedWith("Ownable: caller is not the owner");
     //   });
     // });
+    // describe("addController", function () {
+    //   it("should add a controller", async function () {
+    //     let isController = await unlRegistrar.controllers(userAddr);
+    //     expect(isController).to.be.equal(false);
+    //     await expect(unlRegistrar.addController(userAddr))
+    //       .to.emit(unlRegistrar, "ControllerAdded")
+    //       .withArgs(userAddr);
+    //     isController = await unlRegistrar.controllers(userAddr);
+    //     expect(isController).to.be.equal(true);
+    //     await unlRegistrar.removeController(userAddr);
+    //     isController = await unlRegistrar.controllers(userAddr);
+    //     expect(isController).to.be.equal(false);
+    //     await unlRegistrar.addController(userAddr);
+    //     isController = await unlRegistrar.controllers(userAddr);
+    //     expect(isController).to.be.equal(true);
+    //   });
+    //   it("reverts when trying to add a controller by an unauthorized user", async function () {
+    //     await expect(
+    //       unlRegistrar.connect(hacker).addController(userAddr)
+    //     ).to.be.revertedWith("Ownable: caller is not the owner");
+    //   });
+    //   it("reverts when trying to add a controller already added", async function () {
+    //     await unlRegistrar.addController(userAddr);
+    //     await expect(unlRegistrar.addController(userAddr)).to.be.revertedWith(
+    //       "The controller was already added"
+    //     );
+    //   });
+    // });
+    // describe("removeController", function () {
+    //   it("should remove a controller", async function () {
+    //     let isController = await unlRegistrar.controllers(userAddr);
+    //     expect(isController).to.be.equal(false);
+    //     await unlRegistrar.addController(userAddr);
+    //     isController = await unlRegistrar.controllers(userAddr);
+    //     expect(isController).to.be.equal(true);
+    //     await expect(unlRegistrar.removeController(userAddr))
+    //       .to.emit(unlRegistrar, "ControllerRemoved")
+    //       .withArgs(userAddr);
+    //     isController = await unlRegistrar.controllers(userAddr);
+    //     expect(isController).to.be.equal(false);
+    //     await unlRegistrar.addController(userAddr);
+    //     isController = await unlRegistrar.controllers(userAddr);
+    //     expect(isController).to.be.equal(true);
+    //     await unlRegistrar.removeController(userAddr);
+    //     isController = await unlRegistrar.controllers(userAddr);
+    //     expect(isController).to.be.equal(false);
+    //   });
+    //   it("reverts when trying to remove a controller by an unauthorized user", async function () {
+    //     await unlRegistrar.addController(userAddr);
+    //     await expect(
+    //       unlRegistrar.connect(hacker).removeController(userAddr)
+    //     ).to.be.revertedWith("Ownable: caller is not the owner");
+    //   });
+    //   it("reverts when trying to remove a controller already removed or unexistant", async function () {
+    //     await expect(
+    //       unlRegistrar.removeController(userAddr)
+    //     ).to.be.revertedWith("The controller is already disabled");
+    //     await unlRegistrar.addController(userAddr);
+    //     await unlRegistrar.removeController(userAddr);
+    //     await expect(
+    //       unlRegistrar.removeController(userAddr)
+    //     ).to.be.revertedWith("The controller is already disabled");
+    //   });
+    // });
+    // describe("updateRegistry", function () {
+    //   it("should update registry", async function () {
+    //     let registry = await unlRegistrar.registry();
+    //     expect(registry).to.be.equal(ens.address);
+    //     await expect(
+    //       unlRegistrar.updateRegistry(baseRegistrarImplementation.address)
+    //     )
+    //       .to.emit(unlRegistrar, "RegistryUpdated")
+    //       .withArgs(ens.address, baseRegistrarImplementation.address);
+    //     registry = await unlRegistrar.registry();
+    //     expect(registry).to.be.equal(baseRegistrarImplementation.address);
+    //   });
+    //   it("reverts when updating the registry with the same contract", async function () {
+    //     await expect(
+    //       unlRegistrar.updateRegistry(ens.address)
+    //     ).to.be.revertedWith("New registry should be different from old");
+    //   });
+    //   it("reverts when updating the registry with an EOA", async function () {
+    //     await expect(unlRegistrar.updateRegistry(userAddr)).to.be.revertedWith(
+    //       "New registry should be a contract"
+    //     );
+    //   });
+    //   it("reverts when trying to update the registry by a hacker", async function () {
+    //     await expect(
+    //       unlRegistrar
+    //         .connect(hacker)
+    //         .updateRegistry(baseRegistrarImplementation.address)
+    //     ).to.be.revertedWith("Ownable: caller is not the owner");
+    //   });
+    // });
+    // describe("updateBase", function () {
+    //   it("should update base", async function () {
+    //     let base = await unlRegistrar.base();
+    //     expect(base).to.be.equal(baseRegistrarImplementation.address);
+    //     await expect(unlRegistrar.updateBase(ens.address))
+    //       .to.emit(unlRegistrar, "BaseUpdated")
+    //       .withArgs(baseRegistrarImplementation.address, ens.address);
+    //     base = await unlRegistrar.base();
+    //     expect(base).to.be.equal(ens.address);
+    //   });
+    //   it("reverts when updating the base with the same contract", async function () {
+    //     await expect(
+    //       unlRegistrar.updateBase(baseRegistrarImplementation.address)
+    //     ).to.be.revertedWith("New base should be different from old");
+    //   });
+    //   it("reverts when updating the registry with an EOA", async function () {
+    //     await expect(unlRegistrar.updateBase(userAddr)).to.be.revertedWith(
+    //       "New base should be a contract"
+    //     );
+    //   });
+    //   it("reverts when trying to update the base by a hacker", async function () {
+    //     await expect(
+    //       unlRegistrar.connect(hacker).updateRegistry(ens.address)
+    //     ).to.be.revertedWith("Ownable: caller is not the owner");
+    //   });
+    // });
+    // describe("updateBaseURI", function () {
+    //   it("should update base URI", async function () {
+    //     await unlRegistrar.addController(userControllerAddr);
+    //     await unlRegistrar
+    //       .connect(userController)
+    //       .register(subdomain1, userAddr);
+    //     let baseURI = await unlRegistrar.baseURI();
+    //     expect(BASE_URI).to.be.equal(baseURI);
+    //     let uri = await unlRegistrar.tokenURI(subdomain1LabelHash);
+    //     expect(uri).to.be.equal(`${BASE_URI}${subdomain1}`);
+    //     const newBaseURI = "https";
+    //     await expect(unlRegistrar.updateBaseURI(newBaseURI))
+    //       .to.emit(unlRegistrar, "BaseURI")
+    //       .withArgs(BASE_URI, newBaseURI);
+    //     baseURI = await unlRegistrar.baseURI();
+    //     expect(newBaseURI).to.be.equal(baseURI);
+    //     uri = await unlRegistrar.tokenURI(subdomain1LabelHash);
+    //     expect(uri).to.be.equal(`${newBaseURI}${subdomain1}`);
+    //   });
+    //   it("reverts when trying to change with the same value", async function () {
+    //     await expect(unlRegistrar.updateBaseURI(BASE_URI)).to.be.revertedWith(
+    //       "Base URI should be different from old"
+    //     );
+    //   });
+    //   it("reverts when trying to change values by hacker", async function () {
+    //     await expect(
+    //       unlRegistrar.connect(hacker).updateBaseURI("https")
+    //     ).to.be.revertedWith("Ownable: caller is not the owner");
+    //   });
+    // });
+    // describe("getTokenId", function () {
+    //   beforeEach(async () => {
+    //     await unlRegistrar.addController(userControllerAddr);
+    //   });
+    //   it("should return the token id for a subdomain", async function () {
+    //     await unlRegistrar
+    //       .connect(userController)
+    //       .register(subdomain1, userAddr);
+    //     let tokenId = await unlRegistrar.getTokenId(subdomain1);
+    //     expect(tokenId).to.eq(BigNumber.from(subdomain1LabelHash));
+    //     await unlRegistrar
+    //       .connect(userController)
+    //       .register(subdomain2, userAddr);
+    //     tokenId = await unlRegistrar.getTokenId(subdomain2);
+    //     expect(tokenId).to.eq(BigNumber.from(subdomain2LabelHash));
+    //     await unlRegistrar
+    //       .connect(userController)
+    //       .register(subdomain3, userAddr);
+    //     tokenId = await unlRegistrar.getTokenId(subdomain3);
+    //     expect(tokenId).to.eq(BigNumber.from(subdomain3LabelHash));
+    //   });
+    //   it("should get token id of a subdomain with uppercases", async function () {
+    //     await unlRegistrar
+    //       .connect(userController)
+    //       .register(subdomain1WithLocale, userAddr);
+    //     const tokenId = await unlRegistrar.getTokenId(subdomain1WithLocale);
+    //     expect(tokenId).to.eq(BigNumber.from(subdomain1LabelHash));
+    //     const sameTokenId = await unlRegistrar.getTokenId(subdomain1);
+    //     expect(tokenId).to.eq(sameTokenId);
+    //   });
+    //   it("reverts when trying to get a token id for a non-existing subdomain", async function () {
+    //     await expect(unlRegistrar.getTokenId(subdomain1WithLocale)).to.be
+    //       .reverted;
+    //   });
+    // });
+    // describe("setResolver", function () {
+    //   it("should set the resolver", async function () {
+    //     await expect(unlRegistrar.setResolver(resolver.address))
+    //       .to.emit(ens, "NewResolver")
+    //       .withArgs(unlDomainHash, resolver.address)
+    //       .to.emit(unlRegistrar, "ResolverUpdated")
+    //       .withArgs(ZERO_ADDRESS, resolver.address);
+    //   });
+    //   it("reverts when trying to update the resolver with a non-contract addrress", async function () {
+    //     await expect(unlRegistrar.setResolver(userAddr)).to.be.revertedWith(
+    //       "New resolver should be a contract"
+    //     );
+    //   });
+    //   it("reverts when trying to update the resolver by an unauthorized user", async function () {
+    //     await expect(
+    //       unlRegistrar.connect(hacker).setResolver(resolver.address)
+    //     ).to.be.revertedWith("Ownable: caller is not the owner");
+    //   });
+    //   it("reverts when trying to update the resolver with the same address", async function () {
+    //     await unlRegistrar.setResolver(resolver.address);
+    //     await expect(
+    //       unlRegistrar.setResolver(resolver.address)
+    //     ).to.be.revertedWith("New resolver should be different from old");
+    //   });
+    //   it("reverts when trying to update the resolver with an invalid address", async function () {
+    //     await expect(unlRegistrar.setResolver(ens.address)).to.be.revertedWith(
+    //       "Invalid address"
+    //     );
+    //     await expect(
+    //       unlRegistrar.setResolver(baseRegistrarImplementation.address)
+    //     ).to.be.revertedWith("Invalid address");
+    //     await expect(
+    //       unlRegistrar.setResolver(unlRegistrar.address)
+    //     ).to.be.revertedWith("Invalid address");
+    //   });
+    // });
+    // describe("forwardToResolver", function () {
+    //   it("should forward a call the resolver", async function () {
+    //     let target = await resolver["addr(bytes32)"](unlDomainHash);
+    //     expect(target).to.be.equal(ZERO_ADDRESS);
+    //     await unlRegistrar.setResolver(resolver.address);
+    //     // setAddr(bytes32,address)
+    //     const data = `0xd5fa2b00${unlDomainHash.replace(
+    //       "0x",
+    //       ""
+    //     )}${userAddr.replace("0x", "000000000000000000000000")}`;
+    //     await expect(unlRegistrar.forwardToResolver(data))
+    //       .to.emit(unlRegistrar, "CallForwarwedToResolver")
+    //       .withArgs(resolver.address, data.toLowerCase(), "0x");
+    //     target = await resolver["addr(bytes32)"](unlDomainHash);
+    //     expect(target).to.be.equal(userAddr);
+    //   });
+    //   it("reverts if if call failed", async function () {
+    //     await unlRegistrar.setResolver(resolver.address);
+    //     // setAddr(bytes32,address)
+    //     const data = `0xd5fa2b00${ethTopdomainHash.replace(
+    //       "0x",
+    //       ""
+    //     )}${userAddr.replace("0x", "000000000000000000000000")}`;
+    //     await expect(unlRegistrar.forwardToResolver(data)).to.be.revertedWith(
+    //       "Call failed"
+    //     );
+    //   });
+    //   it("reverts when trying to forward a call by an unathorized user", async function () {
+    //     await expect(
+    //       unlRegistrar.connect(hacker).forwardToResolver(resolver.address)
+    //     ).to.be.revertedWith("Ownable: caller is not the owner");
+    //   });
+    //   it("reverts when trying to forward to an invalid address", async function () {
+    //     await unlRegistrar.setResolver(resolver.address);
+    //     await unlRegistrar.updateBase(resolver.address);
+    //     await expect(
+    //       unlRegistrar.forwardToResolver(ZERO_32_BYTES)
+    //     ).to.be.revertedWith("Invalid address");
+    //   });
+    // });
   });
 });
