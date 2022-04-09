@@ -497,5 +497,111 @@ describe("UNL Names Contract", function () {
     //     ).to.be.revertedWith("ERC721: owner query for nonexistent token");
     //   });
     // });
+    // describe("reclaim :: by owner", function () {
+    //   it("should reclaim an owned name", async function () {
+    //     await unlRegistrar.addController(userControllerAddr);
+    //     await unlRegistrar
+    //       .connect(userController)
+    //       .register(subdomain1, userAddr);
+    //     await expect(
+    //       unlRegistrar
+    //         .connect(user)
+    //         ["reclaim(uint256,address)"](subdomain1LabelHash, userAddr)
+    //     )
+    //       .to.emit(ens, "NewOwner")
+    //       .withArgs(unlDomainHash, subdomain1LabelHash, userAddr)
+    //       .to.emit(unlRegistrar, "Reclaimed")
+    //       .withArgs(
+    //         userAddr,
+    //         userAddr,
+    //         BigNumber.from(subdomain1LabelHash).toString()
+    //       );
+    //     const subdomainOwner = await ens.owner(subdomain1Hash);
+    //     expect(subdomainOwner).to.be.equal(userAddr);
+    //   });
+    //   it("should reclaim a name by an operator", async function () {
+    //     await unlRegistrar.addController(userControllerAddr);
+    //     await unlRegistrar
+    //       .connect(userController)
+    //       .register(subdomain1, userAddr);
+    //     await unlRegistrar
+    //       .connect(user)
+    //       .approve(anotherUserAddr, subdomain1LabelHash);
+    //     await unlRegistrar
+    //       .connect(anotherUser)
+    //       ["reclaim(uint256,address)"](subdomain1LabelHash, anotherUserAddr);
+    //     const subdomainOwner = await ens.owner(subdomain1Hash);
+    //     expect(subdomainOwner).to.be.equal(anotherUserAddr);
+    //   });
+    //   it("should reclaim a name by an approval for all", async function () {
+    //     await unlRegistrar.addController(userControllerAddr);
+    //     await unlRegistrar
+    //       .connect(userController)
+    //       .register(subdomain1, userAddr);
+    //     await unlRegistrar
+    //       .connect(user)
+    //       .setApprovalForAll(anotherUserAddr, true);
+    //     await unlRegistrar
+    //       .connect(anotherUser)
+    //       ["reclaim(uint256,address)"](subdomain1LabelHash, anotherUserAddr);
+    //     const subdomainOwner = await ens.owner(subdomain1Hash);
+    //     expect(subdomainOwner).to.be.equal(anotherUserAddr);
+    //   });
+    //   it("should reclaim a name previously transferred", async function () {
+    //     await unlRegistrar.addController(userControllerAddr);
+    //     await unlRegistrar
+    //       .connect(userController)
+    //       .register(subdomain1, userAddr);
+    //     await unlRegistrar
+    //       .connect(user)
+    //       .transferFrom(userAddr, anotherUserAddr, subdomain1LabelHash);
+    //     await unlRegistrar
+    //       .connect(anotherUser)
+    //       ["reclaim(uint256,address)"](subdomain1LabelHash, anotherUserAddr);
+    //     const subdomainOwner = await ens.owner(subdomain1Hash);
+    //     expect(subdomainOwner).to.be.equal(anotherUserAddr);
+    //   });
+    //   it("should assign ownership to an account other than the sender", async function () {
+    //     await unlRegistrar.addController(userControllerAddr);
+    //     await unlRegistrar
+    //       .connect(userController)
+    //       .register(subdomain1, userAddr);
+    //     await expect(
+    //       unlRegistrar
+    //         .connect(user)
+    //         ["reclaim(uint256,address)"](subdomain1LabelHash, anotherUserAddr)
+    //     )
+    //       .to.emit(ens, "NewOwner")
+    //       .withArgs(unlDomainHash, subdomain1LabelHash, anotherUserAddr)
+    //       .to.emit(unlRegistrar, "Reclaimed")
+    //       .withArgs(
+    //         userAddr,
+    //         anotherUserAddr,
+    //         BigNumber.from(subdomain1LabelHash).toString()
+    //       );
+    //     const subdomainOwner = await ens.owner(subdomain1Hash);
+    //     expect(subdomainOwner).to.be.equal(anotherUserAddr);
+    //   });
+    //   it("reverts when trying to reclaim by an unauthorized user", async function () {
+    //     await unlRegistrar.addController(userControllerAddr);
+    //     await unlRegistrar
+    //       .connect(userController)
+    //       .register(subdomain1, userAddr);
+    //     await expect(
+    //       unlRegistrar
+    //         .connect(hacker)
+    //         ["reclaim(uint256,address)"](subdomain1LabelHash, hackerAddr)
+    //     ).to.be.revertedWith(
+    //       "Only an authorized account can change the subdomain settings"
+    //     );
+    //   });
+    //   it("reverts when trying to reclaim an non-exist name", async function () {
+    //     await expect(
+    //       unlRegistrar
+    //         .connect(user)
+    //         ["reclaim(uint256,address)"](subdomain1LabelHash, userAddr)
+    //     ).to.be.revertedWith("ERC721: operator query for nonexistent token");
+    //   });
+    // });
   });
 });
