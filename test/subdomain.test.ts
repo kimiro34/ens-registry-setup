@@ -603,5 +603,23 @@ describe("UNL Names Contract", function () {
     //     ).to.be.revertedWith("ERC721: operator query for nonexistent token");
     //   });
     // });
+    describe("onERC721Received", function () {
+      it("reverts when transferring a token to the registrar by an unauthorized account", async function () {
+        await unlRegistrar.addController(userControllerAddr);
+        await unlRegistrar
+          .connect(userController)
+          .register(subdomain1, userAddr);
+
+        await expect(
+          unlRegistrar
+            .connect(user)
+            ["safeTransferFrom(address,address,uint256)"](
+              userAddr,
+              unlRegistrar.address,
+              subdomain1LabelHash
+            )
+        ).to.be.revertedWith("Only base can send NFTs to this contract");
+      });
+    });
   });
 });
