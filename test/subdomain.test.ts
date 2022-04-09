@@ -71,7 +71,7 @@ async function setupResolver(ens: Contract, resolver: Contract, owner: string) {
 
 describe("UNL Names Contract", function () {
   let UNLRegistrar: any,
-    UNLController,
+    UNLController: any,
     ENSRegistry,
     BaseRegistrarImplementation,
     PublicResolver,
@@ -1019,4 +1019,399 @@ describe("UNL Names Contract", function () {
     //   });
     // });
   });
+  // describe("DCLController", function () {
+  //   beforeEach(async () => {
+  //     await uccContract.mint(userAddr, MAX_UINT256);
+  //     await uccContract
+  //       .connect(user)
+  //       .approve(unlController.address, MAX_UINT256);
+  //   });
+
+  // describe("Constructor", function () {
+  //   it("should be depoyed with valid arguments", async function () {
+  //     const contract = await UNLController.deploy(
+  //       uccContract.address,
+  //       unlRegistrar.address
+  //     );
+
+  //     const acceptedToken = await contract.acceptedToken();
+  //     expect(acceptedToken).to.be.equal(uccContract.address);
+
+  //     const registrar = await contract.registrar();
+  //     expect(registrar).to.be.equal(unlRegistrar.address);
+
+  //     const price = await unlController.PRICE();
+  //     expect(price).to.eq(PRICE);
+
+  //     const maxGasPrice = await unlController.maxGasPrice();
+  //     expect(maxGasPrice).to.eq(MAX_GAS_PRICE);
+  //   });
+
+  //   it("reverts if acceptedToken is not a contract", async function () {
+  //     await expect(
+  //       UNLController.deploy(userAddr, unlRegistrar.address)
+  //     ).to.be.revertedWith("Accepted token should be a contract");
+  //   });
+
+  //   it("reverts if registrar is not a contract", async function () {
+  //     await expect(
+  //       UNLController.deploy(uccContract.address, userAddr)
+  //     ).to.be.revertedWith("Registrar should be a contract");
+  //   });
+  // });
+
+  // describe("Register", function () {
+  // it("should register a name", async function () {
+  //   await expect(
+  //     unlController.connect(user).register(subdomain1, userAddr, {
+  //       gasPrice: MAX_GAS_PRICE,
+  //     })
+  //   )
+  //     .to.emit(ens, "NewOwner")
+  //     .withArgs(unlDomainHash, subdomain1LabelHash, userAddr)
+  //     .to.emit(unlRegistrar, "Transfer")
+  //     .withArgs(
+  //       ZERO_ADDRESS,
+  //       userAddr,
+  //       BigNumber.from(subdomain1LabelHash).toString()
+  //     )
+  //     .to.emit(unlRegistrar, "NameRegistered")
+  //     .withArgs(
+  //       unlController.address,
+  //       unlController.address,
+  //       subdomain1LabelHash,
+  //       subdomain1
+  //     )
+  //     .to.emit(uccContract, "Burn")
+  //     .withArgs(unlController.address, PRICE.toString())
+  //     .to.emit(unlController, "NameBought")
+  //     .withArgs(userAddr, userAddr, PRICE.toString(), subdomain1);
+
+  //   const balanceOfUser = await unlRegistrar.balanceOf(userAddr);
+  //   expect(balanceOfUser).to.eq(1);
+
+  //   const tokenId = await unlRegistrar.tokenOfOwnerByIndex(userAddr, 0);
+  //   const subdomain = await unlRegistrar.subdomains(tokenId);
+
+  //   expect(subdomain).to.be.equal(subdomain1);
+
+  //   const subdomainOwner = await ens.owner(subdomain1Hash);
+  //   expect(subdomainOwner).to.be.equal(userAddr);
+
+  //   const currentResolver = await ens.resolver(subdomain1Hash);
+  //   expect(currentResolver).to.be.equal(ZERO_ADDRESS);
+  // });
+
+  // it("should register a name with a-z", async function () {
+  //   let name = "qwertyuiopasdfg";
+  //   await unlController.connect(user).register(name, userAddr);
+
+  //   let tokenId = await unlRegistrar.tokenOfOwnerByIndex(userAddr, 0);
+  //   let subdomain = await unlRegistrar.subdomains(tokenId);
+  //   expect(subdomain).to.be.equal(name);
+
+  //   name = "hjklzxcvbnm";
+  //   await unlController.connect(user).register(name, userAddr);
+  //   tokenId = await unlRegistrar.tokenOfOwnerByIndex(userAddr, 1);
+  //   subdomain = await unlRegistrar.subdomains(tokenId);
+  //   expect(subdomain).to.be.equal(name);
+
+  //   name = "abc";
+  //   await unlController.connect(user).register(name, userAddr);
+  //   tokenId = await unlRegistrar.tokenOfOwnerByIndex(userAddr, 2);
+  //   subdomain = await unlRegistrar.subdomains(tokenId);
+  //   expect(subdomain).to.be.equal(name);
+  // });
+
+  // it("should register a name with A-Z", async function () {
+  //   let name = "QWERTYUIOPASDFG";
+  //   await unlController.connect(user).register(name, userAddr);
+
+  //   let tokenId = await unlRegistrar.tokenOfOwnerByIndex(userAddr, 0);
+  //   let subdomain = await unlRegistrar.subdomains(tokenId);
+  //   expect(subdomain).to.be.equal(name);
+
+  //   name = "HJKLZXCVBNM";
+  //   await unlController.connect(user).register(name, userAddr);
+  //   tokenId = await unlRegistrar.tokenOfOwnerByIndex(userAddr, 1);
+  //   subdomain = await unlRegistrar.subdomains(tokenId);
+  //   expect(subdomain).to.be.equal(name);
+
+  //   name = "ABC";
+  //   await unlController.connect(user).register(name, userAddr);
+  //   tokenId = await unlRegistrar.tokenOfOwnerByIndex(userAddr, 2);
+  //   subdomain = await unlRegistrar.subdomains(tokenId);
+  //   expect(subdomain).to.be.equal(name);
+  // });
+
+  // it("should register a name with 0-9", async function () {
+  //   const name = "123456789";
+  //   await unlController.connect(user).register(name, userAddr);
+  //   const tokenId = await unlRegistrar.tokenOfOwnerByIndex(userAddr, 0);
+  //   const subdomain = await unlRegistrar.subdomains(tokenId);
+  //   expect(subdomain).to.be.equal(name);
+  // });
+
+  // it("should register a name with a-A and 0-9", async function () {
+  //   const name = "123456789aBcd";
+  //   await unlController.connect(user).register(name, userAddr);
+  //   const tokenId = await unlRegistrar.tokenOfOwnerByIndex(userAddr, 0);
+  //   const subdomain = await unlRegistrar.subdomains(tokenId);
+  //   expect(subdomain).to.be.equal(name);
+  // });
+
+  // it("reverts when trying to register a name with a gas price higher than max gas price", async function () {
+  //   await expect(
+  //     unlController.connect(user).register(subdomain1, userAddr, {
+  //       gasPrice: MAX_GAS_PRICE + 1,
+  //     })
+  //   ).to.be.revertedWith("Maximum gas price allowed exceeded");
+  // });
+
+  // it("reverts when the name has invalid characters", async function () {
+  //   let name = "the username";
+  //   await expect(
+  //     unlController
+  //       .connect(user)
+  //       .register(name, userAddr, { gasPrice: MAX_GAS_PRICE })
+  //   ).to.be.revertedWith("Invalid Character");
+
+  //   name = "_username";
+  //   await expect(
+  //     unlController
+  //       .connect(user)
+  //       .register(name, userAddr, { gasPrice: MAX_GAS_PRICE })
+  //   ).to.be.revertedWith("Invalid Character");
+
+  //   name = "úsername";
+  //   await expect(
+  //     unlController
+  //       .connect(user)
+  //       .register(name, userAddr, { gasPrice: MAX_GAS_PRICE })
+  //   ).to.be.revertedWith("Invalid Character");
+
+  //   name = '^"}username';
+  //   await expect(
+  //     unlController
+  //       .connect(user)
+  //       .register(name, userAddr, { gasPrice: MAX_GAS_PRICE })
+  //   ).to.be.revertedWith("Invalid Character");
+
+  //   name = "👍username";
+  //   await expect(
+  //     unlController
+  //       .connect(user)
+  //       .register(name, userAddr, { gasPrice: MAX_GAS_PRICE })
+  //   ).to.be.revertedWith("Invalid Character");
+
+  //   name = "€username";
+  //   await expect(
+  //     unlController
+  //       .connect(user)
+  //       .register(name, userAddr, { gasPrice: MAX_GAS_PRICE })
+  //   ).to.be.revertedWith("Invalid Character");
+
+  //   name = "𐍈username";
+  //   await expect(
+  //     unlController
+  //       .connect(user)
+  //       .register(name, userAddr, { gasPrice: MAX_GAS_PRICE })
+  //   ).to.be.revertedWith("Invalid Character");
+
+  //   // Edge cases on ascii table 0x2F
+  //   name = ":username";
+  //   await expect(
+  //     unlController
+  //       .connect(user)
+  //       .register(name, userAddr, { gasPrice: MAX_GAS_PRICE })
+  //   ).to.be.revertedWith("Invalid Character");
+
+  //   // Edge cases on ascii table 0x3A
+  //   name = "/username";
+  //   await expect(
+  //     unlController
+  //       .connect(user)
+  //       .register(name, userAddr, { gasPrice: MAX_GAS_PRICE })
+  //   ).to.be.revertedWith("Invalid Character");
+
+  //   // Edge cases on ascii table 0x40
+  //   name = "@username";
+  //   await expect(
+  //     unlController
+  //       .connect(user)
+  //       .register(name, userAddr, { gasPrice: MAX_GAS_PRICE })
+  //   ).to.be.revertedWith("Invalid Character");
+
+  //   // Edge cases on ascii table 0x5b
+  //   name = "[username";
+  //   await expect(
+  //     unlController
+  //       .connect(user)
+  //       .register(name, userAddr, { gasPrice: MAX_GAS_PRICE })
+  //   ).to.be.revertedWith("Invalid Character");
+
+  //   // Edge cases on ascii table 0x60
+  //   name = "`username";
+  //   await expect(
+  //     unlController
+  //       .connect(user)
+  //       .register(name, userAddr, { gasPrice: MAX_GAS_PRICE })
+  //   ).to.be.revertedWith("Invalid Character");
+
+  //   // Edge cases on ascii table 0x7B
+  //   name = "{username";
+  //   await expect(
+  //     unlController
+  //       .connect(user)
+  //       .register(name, userAddr, { gasPrice: MAX_GAS_PRICE })
+  //   ).to.be.revertedWith("Invalid Character");
+
+  //   // Special characters
+  //   // With ascii 0x1f (US)
+  //   let tx: any = {
+  //     from: userController,
+  //     to: unlController.address,
+  //     data: `0x1e59c5290000000000000000000000000000000000000000000000000000000000000040000000000000000000000000${userAddr.replace(
+  //       "0x",
+  //       ""
+  //     )}00000000000000000000000000000000000000000000000000000000000000031f60600000000000000000000000000000000000000000000000000000000000`,
+  //   };
+  //   await expect(deployer.sendTransaction(tx)).to.be.revertedWith(
+  //     "Invalid Character"
+  //   );
+
+  //   // With ascii 0x00 (NULL)
+  //   tx = {
+  //     from: userController,
+  //     to: unlController.address,
+  //     data: `0x1e59c5290000000000000000000000000000000000000000000000000000000000000040000000000000000000000000${userAddr.replace(
+  //       "0x",
+  //       ""
+  //     )}00000000000000000000000000000000000000000000000000000000000000030060600000000000000000000000000000000000000000000000000000000000`,
+  //   };
+  //   await expect(deployer.sendTransaction(tx)).to.be.revertedWith(
+  //     "Invalid Character"
+  //   );
+
+  //   // With ascii 0x08 (BACKSPACE)
+  //   tx = {
+  //     from: userController,
+  //     to: unlController.address,
+  //     data: `0x1e59c5290000000000000000000000000000000000000000000000000000000000000040000000000000000000000000${userAddr.replace(
+  //       "0x",
+  //       ""
+  //     )}00000000000000000000000000000000000000000000000000000000000000030860600000000000000000000000000000000000000000000000000000000000`,
+  //   };
+  //   await expect(deployer.sendTransaction(tx)).to.be.revertedWith(
+  //     "Invalid Character"
+  //   );
+  // });
+
+  // it("reverts when username is lower than 2 and greather than 15 bytes", async function () {
+  //   const bigUsername = "abignameregistry";
+  //   await expect(
+  //     unlController
+  //       .connect(user)
+  //       .register(bigUsername, userAddr, { gasPrice: MAX_GAS_PRICE })
+  //   ).to.be.revertedWith(
+  //     "Name should be greather than or equal to 2 and less than or equal to 15"
+  //   );
+  // });
+
+  // it("reverts when trying to register a name with a lenght < 3", async function () {
+  //   await expect(
+  //     unlController
+  //       .connect(user)
+  //       .register("", userAddr, { gasPrice: MAX_GAS_PRICE })
+  //   ).to.be.revertedWith(
+  //     "Name should be greather than or equal to 2 and less than or equal to 15"
+  //   );
+
+  //   await expect(
+  //     unlController
+  //       .connect(user)
+  //       .register("a", userAddr, { gasPrice: MAX_GAS_PRICE })
+  //   ).to.be.revertedWith(
+  //     "Name should be greather than or equal to 2 and less than or equal to 15"
+  //   );
+  // });
+
+  // it("reverts when trying to register a name with no balance", async function () {
+  //   const balance = await uccContract.balanceOf(userAddr);
+  //   await uccContract.connect(user).burn(balance);
+  //   await expect(
+  //     unlController.connect(user).register(subdomain1, userAddr, {
+  //       gasPrice: MAX_GAS_PRICE,
+  //     })
+  //   ).to.be.revertedWith("Insufficient funds");
+  // });
+
+  // it("reverts when trying to register a name without approval", async function () {
+  //   await uccContract.connect(user).approve(unlController.address, 0);
+  //   await expect(
+  //     unlController.connect(user).register(subdomain1, userAddr, {
+  //       gasPrice: MAX_GAS_PRICE,
+  //     })
+  //   ).to.be.revertedWith(
+  //     "The contract is not authorized to use the accepted token on sender behalf"
+  //   );
+  // });
+  // });
+
+  // describe("updateMaxGasPrice", function () {
+  //   it("should update the max gas price", async function () {
+  //     let maxGasPrice = await unlController.maxGasPrice();
+  //     expect(maxGasPrice).to.eq(MAX_GAS_PRICE);
+
+  //     const newMaxGasPrice = 1000000000;
+  //     await expect(unlController.updateMaxGasPrice(newMaxGasPrice))
+  //       .to.emit(unlController, "MaxGasPriceChanged")
+  //       .withArgs(MAX_GAS_PRICE, newMaxGasPrice);
+
+  //     maxGasPrice = await unlController.maxGasPrice();
+  //     expect(maxGasPrice).to.eq(newMaxGasPrice);
+  //   });
+
+  //   it("should update the max gas price to 1 gwei", async function () {
+  //     const newMaxGasPrice = 1000000000;
+  //     await unlController.updateMaxGasPrice(newMaxGasPrice);
+
+  //     const maxGasPrice = await unlController.maxGasPrice();
+  //     expect(maxGasPrice).to.eq(newMaxGasPrice);
+  //   });
+
+  //   it("should update the max gas price to 30 gwei", async function () {
+  //     const newMaxGasPrice = 30000000000;
+  //     await unlController.updateMaxGasPrice(newMaxGasPrice);
+
+  //     const maxGasPrice = await unlController.maxGasPrice();
+  //     expect(maxGasPrice).to.eq(newMaxGasPrice);
+  //   });
+
+  //   it("reverts when updating the max gas price by an unauthorized user", async function () {
+  //     const newMaxGasPrice = 10000000000;
+  //     await expect(
+  //       unlController.connect(hacker).updateMaxGasPrice(newMaxGasPrice)
+  //     ).to.be.revertedWith("Ownable: caller is not the owner");
+  //   });
+
+  //   it("reverts when updating the max gas price with lower than 1 gwei", async function () {
+  //     await expect(unlController.updateMaxGasPrice(0)).to.be.revertedWith(
+  //       "Max gas price should be greater than or equal to 1 gwei"
+  //     );
+
+  //     await expect(
+  //       unlController.updateMaxGasPrice(999999999)
+  //     ).to.be.revertedWith(
+  //       "Max gas price should be greater than or equal to 1 gwei"
+  //     );
+  //   });
+
+  //   it("reverts when updating the max gas price with the same value", async function () {
+  //     await expect(
+  //       unlController.updateMaxGasPrice(MAX_GAS_PRICE)
+  //     ).to.be.revertedWith("Max gas price should be different");
+  //   });
+  // });
+  // });
 });
