@@ -717,5 +717,45 @@ describe("UNL Names Contract", function () {
     //     ).to.be.revertedWith("Ownable: caller is not the owner");
     //   });
     // });
+    // describe("transferDomainOwnership", function () {
+    //   it("should transfer an owned domain", async function () {
+    //     let domainOwner = await baseRegistrarImplementation.ownerOf(
+    //       unlLabelHash
+    //     );
+    //     expect(domainOwner).to.be.equal(unlRegistrar.address);
+    //     let subdomainOwner = await ens.owner(unlDomainHash);
+    //     expect(subdomainOwner).to.be.equal(unlRegistrar.address);
+    //     await expect(
+    //       unlRegistrar.transferDomainOwnership(userAddr, unlLabelHash)
+    //     )
+    //       .to.emit(baseRegistrarImplementation, "Transfer")
+    //       .withArgs(unlRegistrar.address, userAddr, unlLabelHash)
+    //       .to.emit(unlRegistrar, "DomainTransferred")
+    //       .withArgs(userAddr, BigNumber.from(unlLabelHash).toString());
+    //     domainOwner = await baseRegistrarImplementation.ownerOf(unlLabelHash);
+    //     expect(domainOwner).to.be.equal(userAddr);
+    //     subdomainOwner = await ens.owner(unlDomainHash);
+    //     expect(subdomainOwner).to.be.equal(unlRegistrar.address);
+    //     await baseRegistrarImplementation
+    //       .connect(user)
+    //       ["reclaim(uint256,address)"](unlLabelHash, userAddr);
+    //     domainOwner = await baseRegistrarImplementation.ownerOf(unlLabelHash);
+    //     expect(domainOwner).to.be.equal(userAddr);
+    //     subdomainOwner = await ens.owner(unlDomainHash);
+    //     expect(subdomainOwner).to.be.equal(userAddr);
+    //   });
+    //   it("reverts when transferring a not owned domain", async function () {
+    //     await expect(
+    //       unlRegistrar.transferDomainOwnership(userAddr, labelhash("dcl2"))
+    //     ).to.be.reverted;
+    //   });
+    //   it("reverts when transferring a domain by an unauthorized user", async function () {
+    //     await expect(
+    //       unlRegistrar
+    //         .connect(hacker)
+    //         .transferDomainOwnership(userAddr, unlLabelHash)
+    //     ).to.be.revertedWith("Ownable: caller is not the owner");
+    //   });
+    // });
   });
 });
