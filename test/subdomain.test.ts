@@ -657,5 +657,65 @@ describe("UNL Names Contract", function () {
     //   await expect(unlRegistrar.tokenURI(subdomain1LabelHash)).to.be.reverted;
     // });
     // });
+    // describe("available", function () {
+    //   it("should return whether a name is available or not", async function () {
+    //     let isAvailable = await unlRegistrar.available(subdomain1);
+    //     expect(isAvailable).to.be.equal(true);
+    //     await unlRegistrar.addController(userControllerAddr);
+    //     await unlRegistrar
+    //       .connect(userController)
+    //       .register(subdomain1, userAddr);
+    //     isAvailable = await unlRegistrar.available(subdomain1);
+    //     expect(isAvailable).to.be.equal(false);
+    //     isAvailable = await unlRegistrar.available(subdomain1WithLocale);
+    //     expect(isAvailable).to.be.equal(false);
+    //     isAvailable = await unlRegistrar.available(subdomain2);
+    //     expect(isAvailable).to.be.equal(true);
+    //   });
+    // });
+    // describe("reclaimDomain", function () {
+    //   it("should reclaim a domain previously transferred to the registrar contract", async function () {
+    //     const labelHash = labelhash("unl2");
+    //     const hash = ethers.utils.keccak256(
+    //       ethers.utils.defaultAbiCoder.encode(
+    //         ["bytes32", "bytes32"],
+    //         [ethTopdomainHash, labelHash]
+    //       )
+    //     );
+    //     let subdomainOwner = await ens.owner(hash);
+    //     expect(subdomainOwner).to.be.equal(ZERO_ADDRESS);
+    //     // Register unl2
+    //     await baseRegistrarImplementation.register(
+    //       labelhash("unl2"),
+    //       deployerAddr,
+    //       60 * 60 * 24 * 30
+    //     );
+    //     subdomainOwner = await ens.owner(hash);
+    //     expect(subdomainOwner).to.be.equal(deployerAddr);
+    //     // Transfer unl2 domain to registrar
+    //     await baseRegistrarImplementation.transferFrom(
+    //       deployerAddr,
+    //       unlRegistrar.address,
+    //       labelHash
+    //     );
+    //     subdomainOwner = await ens.owner(hash);
+    //     expect(subdomainOwner).to.be.equal(deployerAddr);
+    //     await expect(unlRegistrar.reclaimDomain(labelHash))
+    //       .to.emit(ens, "NewOwner")
+    //       .withArgs(ethTopdomainHash, labelHash, unlRegistrar.address)
+    //       .to.emit(unlRegistrar, "DomainReclaimed")
+    //       .withArgs(BigNumber.from(labelHash).toString());
+    //     subdomainOwner = await ens.owner(hash);
+    //     expect(subdomainOwner).to.be.equal(unlRegistrar.address);
+    //   });
+    //   it("should allow to claim a domain already owned", async function () {
+    //     await unlRegistrar.reclaimDomain(unlLabelHash);
+    //   });
+    //   it("reverts when trying to reclaim a domain by an unauthorized user", async function () {
+    //     await expect(
+    //       unlRegistrar.connect(hacker).reclaimDomain(unlLabelHash)
+    //     ).to.be.revertedWith("Ownable: caller is not the owner");
+    //   });
+    // });
   });
 });
