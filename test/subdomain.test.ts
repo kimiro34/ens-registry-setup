@@ -443,5 +443,59 @@ describe("UNL Names Contract", function () {
     //     ).to.be.revertedWith("");
     //   });
     // });
+    // describe("reclaim :: by controller", function () {
+    //   it("should reclaim an owned name", async function () {
+    //     await unlRegistrar.addController(userControllerAddr);
+    //     await unlRegistrar
+    //       .connect(userController)
+    //       .register(subdomain1, userAddr);
+    //     await expect(
+    //       unlRegistrar
+    //         .connect(userController)
+    //         ["reclaim(uint256)"](subdomain1LabelHash)
+    //     )
+    //       .to.emit(ens, "NewOwner")
+    //       .withArgs(unlDomainHash, subdomain1LabelHash, userAddr)
+    //       .to.emit(unlRegistrar, "Reclaimed")
+    //       .withArgs(
+    //         userControllerAddr,
+    //         userAddr,
+    //         BigNumber.from(subdomain1LabelHash).toString()
+    //       );
+    //     const subdomainOwner = await ens.owner(subdomain1Hash);
+    //     expect(subdomainOwner).to.be.equal(userAddr);
+    //   });
+    //   it("should reclaim a name previously transferred", async function () {
+    //     await unlRegistrar.addController(userControllerAddr);
+    //     await unlRegistrar
+    //       .connect(userController)
+    //       .register(subdomain1, userAddr);
+    //     await unlRegistrar
+    //       .connect(user)
+    //       .transferFrom(userAddr, anotherUserAddr, subdomain1LabelHash);
+    //     await unlRegistrar
+    //       .connect(userController)
+    //       ["reclaim(uint256)"](subdomain1LabelHash);
+    //     const subdomainOwner = await ens.owner(subdomain1Hash);
+    //     expect(subdomainOwner).to.be.equal(anotherUserAddr);
+    //   });
+    //   it("reverts when trying to reclaim by an unauthorized user", async function () {
+    //     await unlRegistrar.addController(userControllerAddr);
+    //     await unlRegistrar
+    //       .connect(userController)
+    //       .register(subdomain1, userAddr);
+    //     await expect(
+    //       unlRegistrar.connect(hacker)["reclaim(uint256)"](subdomain1LabelHash)
+    //     ).to.be.revertedWith("Only a controller can call this method");
+    //   });
+    //   it("reverts when trying to reclaim an non-exist name", async function () {
+    //     await unlRegistrar.addController(userControllerAddr);
+    //     await expect(
+    //       unlRegistrar
+    //         .connect(userController)
+    //         ["reclaim(uint256)"](subdomain1LabelHash)
+    //     ).to.be.revertedWith("ERC721: owner query for nonexistent token");
+    //   });
+    // });
   });
 });
